@@ -1,42 +1,38 @@
-import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  Alert,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
-
+import React from 'react';
+import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {useLoginMutation} from '../services/appLevel';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {setAuthToken} from '../redux/authSlice';
+import {Formik} from 'formik';
+import * as Yup from 'yup';
+import {TextInput} from 'react-native';
+import Button from '../components/Button';
 
 const LoginScreen = ({navigation}: any) => {
-  const [email, setUsername] = useState('rohitrathore564025@gmail.com');
-  const [password, setPassword] = useState('Rohit@321');
   const [login] = useLoginMutation();
   const dispatch = useDispatch();
 
-  const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please enter both username and password');
-      return;
-    }
+  const loginValidationSchema = Yup.object().shape({
+    email: Yup.string()
+      .email('Please enter a valid email')
+      .required('Email is required'),
+    password: Yup.string()
+      .required('Password is required'),
+  });
 
+  const handleLogin = async (values: any) => {
     try {
-      const response = await login({email, password});
-    
-      if (response?.data?.messageDetail?.message_code === 200) {
-        const token = response?.data?.data?.authToken?.accessToken
+      const response = await login({
+        email: values.email,
+        password: values.password,
+      });
+            if (response?.data?.messageDetail?.message_code === 200) {
+        const token = response?.data?.data?.authToken?.accessToken;
         dispatch(setAuthToken(token));
         navigation.navigate('CheckStack');
-      } else {
-        Alert.alert('Login Error', 'Invalid username or password');
       }
     } catch (error) {
-      Alert.alert('Login Error', 'Something went wrong. Please try again.');
+      //api errors
     }
   };
 
@@ -46,35 +42,52 @@ const LoginScreen = ({navigation}: any) => {
         <Image source={require('../images/logo.png')} style={styles.logo} />
       </View>
 
-      <View style={styles.card}>
-        <Text style={styles.welcomeText}>Welcome Back!</Text>
+      <Formik
+        initialValues={{email: '', password: ''}}
+        validationSchema={loginValidationSchema}
+        onSubmit={handleLogin}>
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          values,
+          errors,
+          touched,
+        }) => (
+          <View style={styles.card}>
+            <Text style={styles.welcomeText}>Welcome Back!</Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Username"
-          placeholderTextColor="#777"
-          value={email}
-          onChangeText={setUsername}
-        />
+            <TextInput
+              style={styles.input}
+              placeholder="Username"
+              value={values.email}
+              onChangeText={handleChange('email')}
+              onBlur={handleBlur('email')}
+              keyboardType="email-address"
+            />
+            {touched.email && errors.email && (
+              <Text style={styles.errorText}>{errors.email}</Text>
+            )}
 
-        <View style={styles.passwordContainer}>
-          <TextInput
-            style={styles.inputPassword}
-            placeholder="Password"
-            placeholderTextColor="#777"
-            value={password}
-            onChangeText={setPassword}
-          />
-        </View>
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              value={values.password}
+              onChangeText={handleChange('password')}
+              onBlur={handleBlur('password')}
+              secureTextEntry
+            />
+            {touched.password && errors.password && (
+              <Text style={styles.errorText}>{errors.password}</Text>
+            )}
 
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Log In</Text>
-        </TouchableOpacity>
-      </View>
+            <Button title="Log In" onPress={() => handleSubmit()} />
+          </View>
+        )}
+      </Formik>
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -153,6 +166,11 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 14,
     textDecorationLine: 'underline',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginBottom: 10,
   },
 });
 

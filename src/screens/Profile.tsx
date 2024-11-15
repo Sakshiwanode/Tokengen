@@ -1,7 +1,8 @@
-import { View, Text, Button } from 'react-native'
+import { View} from 'react-native'
 import React from 'react'
 import { useDispatch } from 'react-redux'
 import { setAuthToken } from '../redux/authSlice'
+import Button from '../components/Button'
 
 const Profile = () => {
   const dispatch = useDispatch()

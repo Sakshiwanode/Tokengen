@@ -14,8 +14,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {setAuthToken} from '../redux/authSlice';
 
 const LoginScreen = ({navigation}: any) => {
-  const [email, setUsername] = useState('rohitrathore564025@gmail.com');
-  const [password, setPassword] = useState('Rohit@321');
+  const [email, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [login] = useLoginMutation();
   const dispatch = useDispatch();
 
@@ -55,6 +55,8 @@ const LoginScreen = ({navigation}: any) => {
           placeholderTextColor="#777"
           value={email}
           onChangeText={setUsername}
+          keyboardType="email-address"
+          autoCapitalize="none"
         />
 
         <View style={styles.passwordContainer}>

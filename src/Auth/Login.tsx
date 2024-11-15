@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 import {useLoginMutation} from '../services/appLevel';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {setAuthToken} from '../redux/authSlice';
 
 const LoginScreen = ({navigation}: any) => {

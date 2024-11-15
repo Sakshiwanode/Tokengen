@@ -25,11 +25,11 @@ const axiosBaseQuery = (baseUrl: string) => async (payload: any) => {
 
 export const appLevelApi = createApi({
   reducerPath: 'AppLevel_SolzitApi', 
-  baseQuery: axiosBaseQuery('https://solzitessapi-dev.azurewebsites.net/api/V1/Auth/'),  
+  baseQuery: axiosBaseQuery('https://solzitessapi-dev.azurewebsites.net/api/V1'),  
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (data) => ({
-        url: 'Authenticate',
+        url: '/Auth/Authenticate',
         method: 'POST',
         body: data, 
       }),

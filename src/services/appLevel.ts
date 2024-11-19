@@ -47,7 +47,54 @@ export const appLevelApi = createApi({
         method: 'GET',
       }),
     }),
+    EmployeeAppliedLeaves: builder.query({
+      query: () => ({
+        url: '/LeaveRecords/AppliedLeaveRecordList',
+        method: 'GET',
+      }),
+      
+    }),
+
+ 
+    EmployeeLeaveApply: builder.mutation({
+      query: (data) => ({
+        url: '/LeaveRecords/ApplyNewLeaveRequest',
+        method: 'POST',
+        body: data,
+        
+      }),
+      
+    }),
+
+   
+    ProcessedLeaves: builder.query({
+      query: () => ({
+        url: '/LeaveRecords/AcceptedLeaveRecordList',
+        method: 'GET',
+      }),
+     
+    }),
+
+   
+    EmployeeCancelLeaves: builder.mutation({
+      query: (data) => ({
+        url: '/LeaveRecords/CancelLeaveRequest',
+        method: 'POST',
+        body: data,
+       
+      }),
+     
+    }),
   }),
 });
 
-export const { useLoginMutation, useGetUpcomingBirthdaysQuery } = appLevelApi;
+
+export const {
+  useLoginMutation,
+  useGetUpcomingBirthdaysQuery,
+  useEmployeeAppliedLeavesQuery,
+  useEmployeeLeaveApplyMutation,
+  useProcessedLeavesQuery,
+  useEmployeeCancelLeavesMutation,
+} = appLevelApi;
+ 

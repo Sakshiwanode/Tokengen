@@ -1,8 +1,8 @@
 import React from 'react';
-import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, Image, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import {useLoginMutation} from '../services/appLevel';
 import {useDispatch} from 'react-redux';
-import {setAuthToken} from '../redux/authSlice';
+import {setAuthToken, setCrediencialId} from '../redux/authSlice';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import {TextInput} from 'react-native';
@@ -28,8 +28,23 @@ const LoginScreen = ({navigation}: any) => {
       });
             if (response?.data?.messageDetail?.message_code === 200) {
         const token = response?.data?.data?.authToken?.accessToken;
+        const userID =response.data.data.userProfile.userId
         dispatch(setAuthToken(token));
+        dispatch(setCrediencialId(userID))
+                
         navigation.navigate('CheckStack');
+      }
+      else {
+        // Handle specific validation errors
+        const errorCode = response?.data?.messageDetail?.error_code;
+  
+        if (errorCode === 'INVALID_EMAIL') {
+          Alert.alert('Login Failed', 'The email you entered is incorrect.');
+        } else if (errorCode === 'INVALID_PASSWORD') {
+          Alert.alert('Login Failed', 'The password you entered is incorrect.');
+        } else {
+          Alert.alert('Login Failed', 'Invalid credentials.');
+        }
       }
     } catch (error) {
       //api errors
